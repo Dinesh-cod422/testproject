@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 export default function Index() {
   return (
    <View>
-    <Text>hii</Text>
+    <Text>hiif</Text>
    </View>
   );
 }
