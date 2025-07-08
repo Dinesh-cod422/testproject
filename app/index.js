@@ -1,23 +1,31 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { login } from '../api';
+import { useState } from 'react';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useLogin } from '../api/hooks';
+import { useAuthStore } from '../store/auth';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('test@gmail.com');
+  const [password, setPassword] = useState('password123');
   const router = useRouter();
+  const setToken = useAuthStore((state) => state.setToken);
+  const { mutate: login, isPending: isLoading } = useLogin();
 
-  const handleLogin = async () => {
-    try {
-      const response = await login({ email, password });
-      const { token } = response;
-      await AsyncStorage.setItem('token', token);
-      router.replace('/dashboard'); // Redirect to dashboard
-    } catch (error) {
-      Alert.alert('Login Failed', error.message || 'Invalid email or password');
-    }
+  const handleLogin = () => {
+    login(
+      { email, password },
+      {
+        onSuccess: async (data) => {
+          await AsyncStorage.setItem('token', data.token);
+          setToken(data.token);
+          router.replace('/dashboard');
+        },
+        onError: (error) => {
+          Alert.alert('Login Failed', error.message || 'Invalid email or password');
+        },
+      },
+    );
   };
 
   return (
@@ -38,7 +46,7 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} />
+      <Button title={isLoading ? 'Logging in...' : 'Login'} onPress={handleLogin} disabled={isLoading} />
     </View>
   );
 }

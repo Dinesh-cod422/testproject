@@ -1,31 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fetchDashboard } from '../api';
+import { useRouter } from 'expo-router';
+import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
+import { useDashboard } from '../api/hooks';
+import { useAuthStore } from '../store/auth';
 
 export default function DashboardScreen() {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const router = useRouter();
+  const token = useAuthStore((state) => state.token);
+  const { data: userData, isPending: isLoading, error } = useDashboard(token);
 
-  useEffect(() => {
-    const loadDashboard = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        if (!token) throw new Error('No token found');
-        const data = await fetchDashboard(token);
-        setUserData(data);
-      } catch (err) {
-        setError(err.message || 'Failed to load dashboard');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadDashboard();
-  }, []);
-
-  if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
-  if (error) return <Text style={styles.error}>{error}</Text>;
+  if (isLoading) return <ActivityIndicator size="large" color="#0000ff" />;
+  if (error) return <Text style={styles.error}>{error.message || 'Failed to load dashboard'}</Text>;
 
   return (
     <View style={styles.container}>
@@ -36,6 +20,10 @@ export default function DashboardScreen() {
       <Text>Remaining Medication: {userData.remainingMedication}</Text>
       <Text>Status: {userData.status}</Text>
       <Text>Billing Status: {userData.billingStatus}</Text>
+      <Button
+        title="View Shipment History"
+        onPress={() => router.push('/shipment-history')}
+      />
     </View>
   );
 }
