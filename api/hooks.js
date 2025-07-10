@@ -21,7 +21,7 @@ export const useDashboard = (token) => {
   return useQuery({
     queryKey: ['dashboard', token],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/user`, {
+      const response = await fetch(`${API_URL}/dashboard`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

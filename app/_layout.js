@@ -12,9 +12,9 @@ export default function RootLayout() {
   const segments = useSegments();
 
   useEffect(() => {
-    if (token && segments[0] !== '(tabs)') {
-      router.replace('/dashboard');
-    } else if (!token && segments[0] === '(tabs)') {
+    if (token && segments[0] !== 'tabs') {
+      router.replace('/tabs/dashboard');
+    } else if (!token && segments[0] === 'tabs') {
       router.replace('/index');
     }
   }, [token, segments]);

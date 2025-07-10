@@ -7,7 +7,7 @@ import { Button, Input } from '../components';
 import { useAuthStore } from '../store/auth';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('test@gmail.com');
+  const [email, setEmail] = useState('dinesh@gmail.com');
   const [password, setPassword] = useState('password123');
   const router = useRouter();
   const setToken = useAuthStore((state) => state.setToken);
@@ -20,7 +20,7 @@ export default function LoginScreen() {
         onSuccess: async (data) => {
           await AsyncStorage.setItem('token', data.token);
           setToken(data.token);
-          router.replace('/dashboard');
+          router.replace('/tabs/dashboard');
         },
         onError: (error) => {
           Alert.alert('Login Failed', error.message || 'Invalid email or password');

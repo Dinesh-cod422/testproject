@@ -33,7 +33,7 @@ export default function DashboardScreen() {
       </Card>
       <Button
         title="View Shipment History"
-        onPress={() => router.push('/shipment-history')}
+        onPress={() => router.push('/tabs/shipment-history')}
       />
     </View>
   );
