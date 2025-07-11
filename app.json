@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "testDemoApp",
-    "slug": "testDemoApp",
+    "name": "BestPharma",
+    "slug": "BestPharma",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "testdemoapp",
+    "scheme": "BestPharma",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -17,7 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.testDemoApp"
+      "package": "com.anonymous.BestPharma"
     },
     "web": {
       "bundler": "metro",

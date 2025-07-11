@@ -1,88 +1,47 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { Alert, StyleSheet, Text, View } from 'react-native';
-import { z } from 'zod';
-import { useLogin } from '../api/hooks';
-import { Button, Input } from '../components';
-import { useAuthStore } from '../store/auth';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Button } from '../components';
 
-// Define validation schema with Zod
-const loginSchema = z.object({
-  email: z.string().email('Invalid email address').nonempty('Email is required'),
-  password: z.string().min(6, 'Password must be at least 6 characters').nonempty('Password is required'),
-});
+const { width } = Dimensions.get('window');
 
-export default function LoginScreen() {
+export default function IndexScreen() {
   const router = useRouter();
-  const setToken = useAuthStore((state) => state.setToken);
-  const { mutate: login, isPending: isLoading } = useLogin();
 
-  const { control, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: 'dinesh@gmail.com',
-      password: 'password123',
-    },
-  });
-
-  const onSubmit = (data) => {
-    login(
-      { email: data.email, password: data.password },
-      {
-        onSuccess: async (response) => {
-          await AsyncStorage.setItem('token', response.token);
-          setToken(response.token);
-          router.replace('/dashboard');
-        },
-        onError: (error) => {
-          Alert.alert('Login Failed', error.message || 'Invalid email or password');
-        },
-      },
-    );
+  const onSubmit = () => {
+    router.replace('/login');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Pharmacy App Login</Text>
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, value } }) => (
-          <View>
-            <Input
-              placeholder="Email"
-              value={value}
-              onChangeText={onChange}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
-          </View>
-        )}
-      />
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, value } }) => (
-          <View>
-            <Input
-              placeholder="Password"
-              value={value}
-              onChangeText={onChange}
-              secureTextEntry
-            />
-            {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-          </View>
-        )}
-      />
-      <Button
-        title={isLoading ? 'Logging in...' : 'Login'}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isLoading}
-      />
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>
+          BestPharma{'\n'}Your Trusted Online Pharmacy
+        </Text>
+        <Text style={styles.para}>
+          BestPharma delivers trusted, affordable,{'\n'}and convenient online pharmacy services.
+        </Text>
+      </View>
+
+      {/* Animation */}
+      <View style={styles.animationContainer}>
+        <LottieView
+          source={require('../assets/images/FoodCourier.json')}
+          autoPlay
+          loop
+          style={styles.lottie}
+        />
+      </View>
+
+      {/* Footer */}
+      <View style={styles.footer}>
+        <Button
+          title="Sign In"
+          onPress={onSubmit}
+        />
+      </View>
     </View>
   );
 }
@@ -90,20 +49,39 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
     backgroundColor: '#fff',
+    paddingTop: 40,
+    paddingBottom: 20,
+    paddingHorizontal: 24,
+    justifyContent: 'space-between',
+  },
+  header: {
+    alignItems: 'center',
+    marginTop: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#1f2a44',
-    marginBottom: 20,
+    marginBottom: 12,
   },
-  error: {
-    color: 'red',
+  para: {
     fontSize: 14,
-    marginBottom: 8,
+    textAlign: 'center',
+    color: '#444',
+    lineHeight: 20,
+  },
+  animationContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  lottie: {
+    width: width * 0.8,
+    height: width * 0.8,
+  },
+  footer: {
+    marginBottom: 20,
   },
 });
